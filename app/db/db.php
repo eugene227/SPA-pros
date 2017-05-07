@@ -1,217 +1,269 @@
 <?php
 
-require_once 'prelude.php';
+/*---------------------------------------------------------------------*\
+|   WARNING!!!                                                          |
+|   THIS CODE WILL **DELETE/RESET** THE EXISTING PROS DATABASE          |
+|   DEVELOPMENT ONLY - DO NOT DEPLOY                                    |
+\*---------------------------------------------------------------------*/
 
-reroute_guests(__FILE__);
-reroute_users(__FILE__);
+error_reporting(-1); // Report all PHP errors (E_ALL)
+ini_set('display_errors', true);
+ini_set('log_errors', false);
 
-class DB extends SQLite3
+$db_name  = "pros";
+$password = "team3password";
+
+$db = new mysqli("localhost", "root", $password);
+if ($error = $db->connect_error) {
+    echo $error;
+    exit();
+}
+$db->set_charset('utf8');
+
+/*---------------------------------------------------------------------*\
+|   function to create new empty database                               |
+\*---------------------------------------------------------------------*/
+
+function create_new_database($db, $name)
 {
-    public function __construct($name)
-    {
-        $this->open($name);
-    }
-
-    public function tables()
-    {
-        $query  = $this->query("SELECT name FROM sqlite_master WHERE type='table';");
-        $return = [];
-        while ($table = $query->fetchArray(SQLITE3_ASSOC)) {
-            $return[] = $table['name'];
-        }
-        return $return;
-    }
-
-    public function all($table)
-    {
-        $sql = "SELECT * FROM $table;";
-        // echo $sql;
-        $query  = $this->query($sql);
-        $return = [];
-        while ($row = $query->fetchArray()) {
-            $return[] = $row;
-        }
-        return $return;
-    }
+    $error = $db->query("DROP DATABASE IF EXISTS {$name};");
+    $error = $db->query("CREATE DATABASE IF NOT EXISTS {$name};");
 }
 
-$db_name = 'prs_dev_1_0.db';
-if (file_exists($db_name)) {unlink($db_name);}
-$db = new DB($db_name);
+create_new_database($db, $db_name);
 
-// USER
+$error = $db->query("USE {$db_name};");
 
-$sql = <<<SQL
-create table user(
-id         INTEGER PRIMARY KEY,
-email      TEXT,
-first_name TEXT,
-last_name  TEXT,
-password   TEXT);
-SQL;
-$db->exec($sql);
+/*---------------------------------------------------------------------*\
+|   function to drop all tables a database                              |
+\*---------------------------------------------------------------------*/
 
-$sql = <<<SQL
-INSERT INTO user (email, first_name, last_name, password)
-VALUES ("david.i.richards.iii@gmail.com", "David", "Richards", "secret");
-SQL;
-$db->exec($sql);
-
-function dummyUser($db)
+function drop_all_tables($db)
 {
-    $email      = '';
-    $first_name = '';
-    $last_name  = '';
-    $password   = 'secret';
+    $db->query("SET foreign_key_checks = 0");
 
-    $json = file_get_contents('https://randomuser.me/api/');
-    $data = json_decode($json, true)['results'][0];
+    if ($result = $db->query("SHOW TABLES")) {
+        while ($row = $result->fetch_array(MYSQLI_NUM)) {
+            $db->query("DROP TABLE IF EXISTS " . $row[0]);
+        }
+    }
 
-    $email      = $data['email'];
-    $first_name = ucfirst($data['name']['first']);
-    $last_name  = ucfirst($data['name']['last']);
-    $password   = $data['login']['password'];
-
-    $sql = <<<SQL
-INSERT INTO user (email, first_name, last_name, password)
-VALUES ("{$email}", "{$first_name}", "{$last_name}", "{$password}");
-SQL;
-    $db->exec($sql);
+    $db->query("SET foreign_key_checks = 1");
 }
 
-dummyUser($db);
-echo dump($db->all('user'));
-echo dump($db->lastInsertRowID());
-
-// ASSET
+/*---------------------------------------------------------------------*\
+|   create `user` table                                                 |
+\*---------------------------------------------------------------------*/
 
 $sql = <<<SQL
-create table asset(
-id         INTEGER PRIMARY KEY);
+CREATE TABLE `pros`.`user`
+( `id`          INT UNSIGNED NOT NULL ,
+  `email`       TEXT NOT NULL ,
+  `first_name`  TEXT NOT NULL ,
+  `last_name`   TEXT NOT NULL ,
+  `password`    TEXT NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 SQL;
-$db->exec($sql);
 
-echo dump($db->tables());
+$result = $db->query($sql);
+
+/*---------------------------------------------------------------------*\
+|   create `asset` table                                                |
+\*---------------------------------------------------------------------*/
 
 $sql = <<<SQL
-INSERT INTO asset (id)
-VALUES (NULL);
-INSERT INTO asset (id)
-VALUES (NULL);
-INSERT INTO asset (id)
-VALUES (NULL);
+CREATE TABLE `pros`.`asset`
+( `id`          INT UNSIGNED NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 SQL;
-$db->exec($sql);
 
-echo dump($db->all('asset'));
+$result = $db->query($sql);
+
+/*---------------------------------------------------------------------*\
+|   create `version` table                                              |
+\*---------------------------------------------------------------------*/
 
 $sql = <<<SQL
-create table version(
-id         INTEGER PRIMARY KEY,
-asset      INTEGER,
-user       INTEGER,
-updated    TEXT,
-latest     BOOLEAN,
-private    BOOLEAN,
-FOREIGN KEY(asset) REFERENCES asset(id),
-FOREIGN KEY(user)  REFERENCES user(id) );
+CREATE TABLE `pros`.`version`
+( `id`          INT UNSIGNED NOT NULL ,
+  `asset`       INT UNSIGNED NOT NULL , # foreign key asset(id)
+  `owner`       INT UNSIGNED NOT NULL , # foreign key user(id)
+  `version`     TIMESTAMP NOT NULL ,
+  `latest`      BOOLEAN NOT NULL DEFAULT TRUE ,
+  `private`     BOOLEAN NOT NULL DEFAULT TRUE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 SQL;
-$db->exec($sql);
+
+// FIXME
+// $sql .= <<<SQL
+// ALTER TABLE `pros`.`version` ADD FOREIGN KEY(asset)
+// REFERENCES asset(id) ON UPDATE RESTRICT ON DELETE RESTRICT ;
+// SQL;
+
+$result = $db->query($sql);
+
+/*---------------------------------------------------------------------*\
+|   create `choice_list` table                                          |
+\*---------------------------------------------------------------------*/
 
 $sql = <<<SQL
-INSERT INTO version (asset, user, updated, latest, private)
-VALUES (1, 1, "2017-04-23 01:13:00.000", 0, 0);
-INSERT INTO version (asset, user, updated, latest, private)
-VALUES (1, 1, "2017-04-23 01:13:01.000", 1, 0);
+CREATE TABLE `pros`.`choice_list`
+( `id`          INT UNSIGNED NOT NULL ,
+  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
+  `list`        TEXT NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 SQL;
-$db->exec($sql);
 
-echo dump($db->all('version'));
+$result = $db->query($sql);
 
-// QUESTION
+/*---------------------------------------------------------------------*\
+|   create `question` table                                             |
+\*---------------------------------------------------------------------*/
 
 $sql = <<<SQL
-create table question (
-id         INTEGER PRIMARY KEY,
-text       TEXT,
-version    TEXT,
-FOREIGN KEY(version) REFERENCES version(id) );
+CREATE TABLE `pros`.`question`
+( `id`          INT UNSIGNED NOT NULL ,
+  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
+  `text`        TEXT NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 SQL;
-$db->exec($sql);
+
+$result = $db->query($sql);
+
+/*---------------------------------------------------------------------*\
+|   create `survey` table                                               |
+\*---------------------------------------------------------------------*/
 
 $sql = <<<SQL
-INSERT INTO question (version, text)
-VALUES (1, "42?");
-INSERT INTO question (version, text)
-VALUES (2, "What is hip?");
+CREATE TABLE `pros`.`survey`
+( `id`          INT UNSIGNED NOT NULL ,
+  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
+  `title`       TEXT NOT NULL ,
+  `items`       TEXT NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 SQL;
-$db->exec($sql);
 
-// TESTS
+// items is a CSV (ordered) list of list of survey_item(id)s
 
-echo dump($db->tables());
+$result = $db->query($sql);
 
-echo dump($db->all('question'));
+/*---------------------------------------------------------------------*\
+|   create `survey_item` table                                          |
+\*---------------------------------------------------------------------*/
 
-// A ChoiceList contains an encoded list of grades or other discrete values for each question.
+$sql = <<<SQL
+CREATE TABLE `pros`.`survey_item`
+( `id`          INT UNSIGNED NOT NULL ,
+  `question`    INT UNSIGNED NOT NULL , # foreign key question(id)
+  `choices`     TEXT NOT NULL ,
+  `explanation` BOOLEAN NOT NULL DEFAULT TRUE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+SQL;
 
-// ChoiceList
-//     ID  TEXT PRIMARY KEY
-//     version Version:ID
-//     list    TEXT (encoding of ordered list of strings)
+$result = $db->query($sql);
 
-// A User may create Surveys which will be presented to peer Users in a peer review Process.
+/*---------------------------------------------------------------------*\
+|   create `process` table                                              |
+\*---------------------------------------------------------------------*/
 
-// Survey
-//     ID  TEXT PRIMARY KEY
-//     version Version:ID
-//     title   TEXT
-//     items   TEXT (encoding of ordered list of SurveyItem:IDs)
+$sql = <<<SQL
+CREATE TABLE `pros`.`process`
+( `id`          INT UNSIGNED NOT NULL ,
+  `survey`      INT UNSIGNED NOT NULL , # foreign key process(id)
+  `begin`       TIMESTAMP NOT NULL ,
+  `end`         TIMESTAMP NOT NULL ,
+  `invitation`  TEXT NOT NULL ,
+  `status`      TEXT NOT NULL ,
+# status = "proposed", "cancelled", "running", "completed", "draft"
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+SQL;
 
-// A Survey will contain one or more SurveyItems. Each SurveyItem comprises a Question, a ChoiceList and one or more optional evaluation types.
+$result = $db->query($sql);
 
-// SurveyItem
-//     ID  INTEGER PRIMARY KEY
-//     question    Question:ID
-//     choices ChoiceList:ID
-//     [explanation    BOOLEAN (default = TRUE)]
+/*---------------------------------------------------------------------*\
+|   create `process_user` table                                         |
+\*---------------------------------------------------------------------*/
 
-// An Version record is created each time an existing Question, ChoiceList, or Survey is edited, including an initial Version record when the first edition is created. All Versions of the same Question, ChoiceList, or Survey will point to an Asset:ID, identifying them as versions of the same Asset.
+$sql = <<<SQL
+CREATE TABLE `pros`.`process_user`
+( `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
+  `user`        INT UNSIGNED NOT NULL , # foreign key user(id)
+  `accepted`    BOOLEAN NOT NULL DEFAULT FALSE ,
+  `overseer`    BOOLEAN NOT NULL DEFAULT FALSE ,
+  `peer`        BOOLEAN NOT NULL DEFAULT FALSE
+) ENGINE = InnoDB;
+SQL;
 
-// An Asset record is created for every new Question, new ChoiceList, and new Survey. All Versions of this Question, ChoiceList, or Survey will point to this Asset:ID, identifying them as Versions of the same Asset.
+$result = $db->query($sql);
 
-// Asset
-//     ID  INTEGER PRIMARY KEY
+/*---------------------------------------------------------------------*\
+|   create `evaluation` table                                           |
+\*---------------------------------------------------------------------*/
 
-// A Process record contains all information needed by the system to administer/manage a peer review process.
+$sql = <<<SQL
+CREATE TABLE `pros`.`evaluation`
+( `id`          INT UNSIGNED NOT NULL ,
+  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
+  `reviewer`    INT UNSIGNED NOT NULL , # foreign key user(id)
+  `reviewee`    INT UNSIGNED NOT NULL , # foreign key user(id)
+  `complete`    BOOLEAN NOT NULL DEFAULT FALSE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+SQL;
 
-// Process
-//     ID  TEXT PRIMARY KEY
-//     survey  Survey:ID
-//     begin   TIMESTAMP
-//     end TIMESTAMP
-//     status  'proposed', 'cancelled', 'running', 'completed'
+$result = $db->query($sql);
 
-// A Process record links a User to a Process, and identifies the role(s) of that user in the Process. When a Process is proposed, a Process_User record is created for every User involved in that Process, specifying their role and permissions.
+/*---------------------------------------------------------------------*\
+|   create `evaluation` table                                           |
+\*---------------------------------------------------------------------*/
 
-// Process_User
-//     process Process:ID
-//     user    User:ID
-//     accepted    BOOLEAN
-//     overseer    BOOLEAN
-//     peer    BOOLEAN
+$sql = <<<SQL
+CREATE TABLE `pros`.`evaluation`
+( `id`          INT UNSIGNED NOT NULL ,
+  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
+  `reviewer`    INT UNSIGNED NOT NULL , # foreign key user(id)
+  `reviewee`    INT UNSIGNED NOT NULL , # foreign key user(id)
+  `complete`    BOOLEAN NOT NULL DEFAULT FALSE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+SQL;
 
-// When a Process is accepted, an Evaluation record is created for the Cartesian product of peers (each reviewer-reviewee pair), and for each of these pairs an EvaluationItem record is created for every SurveyItem of the Survey associated with the Process.
+$result = $db->query($sql);
 
-// Evaluation
-//     ID  INTEGER PRIMARY KEY
-//     process Process:ID
-//     reviewer    User:ID
-//     reviewee    User:ID
-//     complete    BOOLEAN (default = FALSE)
+/*---------------------------------------------------------------------*\
+|   create `evaluation_item` table                                      |
+\*---------------------------------------------------------------------*/
 
-// EvaluationItem
-//     evaluation  Evaluation:ID
-//     item    SurveyItem:ID
-//     choice  TEXT
-//     explanation TEXT
+$sql = <<<SQL
+CREATE TABLE `pros`.`evaluation_item`
+( `evaluation`  INT UNSIGNED NOT NULL , # foreign key evaluation(id)
+  `item`        INT UNSIGNED NOT NULL , # foreign key survey(id)
+  `choice`      TEXT NOT NULL ,
+  `explanation` TEXT NOT NULL
+) ENGINE = InnoDB;
+SQL;
+
+$result = $db->query($sql);
+
+$db->close();
+
+/*---------------------------------------------------------------------*\
+|   sample query code                                                   |
+\*---------------------------------------------------------------------*/
+
+//         $result = $db->query($sql);
+//         if (!$result) {
+//             throw new Exception("improper query result");
+//         }
+//         if ($db->affected_rows > 1) {
+//             // echo $db->affected_rows;
+//             throw new Exception("improper number of affected_rows");
+//         }
