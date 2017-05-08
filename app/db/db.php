@@ -222,23 +222,6 @@ SQL;
 $result = $db->query($sql);
 
 /*---------------------------------------------------------------------*\
-|   create `evaluation` table                                           |
-\*---------------------------------------------------------------------*/
-
-$sql = <<<SQL
-CREATE TABLE `pros`.`evaluation`
-( `id`          INT UNSIGNED NOT NULL ,
-  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
-  `reviewer`    INT UNSIGNED NOT NULL , # foreign key user(id)
-  `reviewee`    INT UNSIGNED NOT NULL , # foreign key user(id)
-  `complete`    BOOLEAN NOT NULL DEFAULT FALSE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-
-$result = $db->query($sql);
-
-/*---------------------------------------------------------------------*\
 |   create `evaluation_item` table                                      |
 \*---------------------------------------------------------------------*/
 
