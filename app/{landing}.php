@@ -1,0 +1,115 @@
+<?php
+require "app.php";
+sentry(__FILE__);
+$title = "DEVELOPMENT Landing";
+require "compose/HTML_head.php";
+?>
+<!--HEADER row-->
+<header class="w3-white w3-col w3-mobile" style="width:100%">
+    <!--BAR-->
+    <div class="w3-col w3-hide-large w3-hover-grey" style="width:8%">
+        <i style="font-size:50px" class="w3-margin-left fa fa-bars"></i>
+    </div>
+    <!--BUTTONS TO LOG IN-->
+    <div class="w3-col w3-margin-top w3-margin-left w3-hide-small w3-hide-medium" style="width:25%">
+        <button onclick="document.getElementById('login').style.display='block'" class="w3-button w3-blue w3-hover-white w3-round-xxlarge w3-large w3-border w3-border-blue w3-padding-large">Log In</button>
+        <button class="w3-button w3-round-xxlarge w3-large w3-white w3-border w3-border-green w3-hover-teal w3-padding-large w3-margin-left">Sign Up</button>
+    </div>
+</header>
+<!--HEADER row ENDS-->
+<!--HERE IMAGE CONTAINER-->
+<div class="w3-display-container w3-center">
+    <!--FRONT TITLE - DESCTIPTION    ONLY FOR MOBILE DEVICES-->
+    <div class="w3-hide-large w3-center">
+        <h1 class="w3-jumbo">Collaboration Starts Here</h1>
+        <h3 class="w3-xlarge">Impacting team workflow by providing the tools</h3>           <h3 class="w3-xlarge">needed to share feedback with peers within an</h3>
+        <h3 class="w3-xlarge"> online survey platform</h3>
+        <button onclick="document.getElementById('login').style.display='block'" class="w3-button w3-blue w3-hover-white w3-round-xxlarge w3-large w3-border w3-border-blue w3-padding-large">GET STARTED</button>
+    </div>
+    <div class="w3-hide-small w3-hide-medium w3-display-middle w3-center">
+        <h1 class="w3-jumbo">Collaboration Starts Here</h1>
+        <h3 class="w3-xlarge">Impacting team workflow by providing the tools</h3>
+        <h3 class="w3-xlarge">needed to share feedback with peers within an</h3>
+        <h3 class="w3-xlarge">online survey platform</h3>
+        <button onclick="document.getElementById('login').style.display='block'" class="w3-button w3-blue w3-hover-white w3-round-xxlarge w3-large w3-border w3-border-blue w3-padding-large">GET STARTED</button>
+    </div>
+    <!--HERO IMAGE-->
+    <img class="w3-mobile"style="width:100%" src="image/hero-background.jpg" alt="large hero image">
+</div>
+<!--CELL ROW CONTAINING ALL FEATURES-->
+<div class="w3-container w3-cell-row">
+    <!--MOBILE PHONE icon-->
+    <div class="w3-container w3-cell w3-mobile w3-center w3-padding-24">
+        <i style="font-size:100px" class="fa fa-mobile-phone"></i>
+        <h3 class="w3-xlarge w3-torquise"><strong>MOBILE FRIENDLY</strong></h3>
+        <h4 class="w3-large">Build with mobile first design that is responsive to a wide range of modern devices.</h4>
+    </div>
+    <!--CHART icon-->
+    <div class=" w3-container w3-cell w3-mobile w3-center w3-padding-24">
+        <i style="font-size:100px" class="fa fa-bar-chart"></i>
+        <h3 class="w3-xlarge w3-torquise"><strong>TONE ANALYZER</strong></h3>
+        <h4 class="w3-large">Get instant feedback of the writing tone you use in any of your questions or responses before sending them out.</h4>
+    </div>
+    <!--WHEELCHAIR icon-->
+    <div class="w3-container w3-cell w3-mobile w3-center w3-padding-24">
+        <i style="font-size:100px" class="fa fa-wheelchair"></i>
+        <h3 class="w3-xlarge w3-torquise"><strong>ACCESSIBLE</strong></h3>
+        <h4 class="w3-large">Provides easy navigation for keyboard-only users and those who are visually impaired by color blindness.</h4>
+    </div>
+</div>
+<!--3 step desctiption-->
+<h1 class="w3-xxxlarge w3-center w3-margin-top">How to start sharing feedback with your team</h1>
+<div class="w3-container w3-cell-row">
+    <!--step 1-->
+    <div class="w3-container w3-cell w3-mobile w3-center w3-padding-24">
+        <h1 class="w3-jumbo w3-hide-small">1</h1>
+        <h3 class="w3-xlarge w3-torquise"><strong>SET UP A SURVEY</strong></h3>
+        <h4 class="w3-large">Write up your own questions for peer-reviews, with the option to save rough drafts before promoting.</h4>
+        <h4 class="w3-hide-medium w3-hide-large w3-text-grey w3-wide">•    •    •    •    •    •    •    •    •    •    •    •    •    •</h4>
+    </div>
+    <!--step 2-->
+    <div class=" w3-container w3-cell w3-mobile w3-center w3-padding-24">
+        <h1 class="w3-jumbo w3-hide-small">2</h1>
+        <h3 class="w3-xlarge w3-torquise"><strong>LAUNCH AND PROMOTE</strong></h3>
+        <h4 class="w3-large">Once you're satisfied with the final draft, share your new survey for feedback.</h4>
+        <h4 class="w3-hide-medium w3-hide-large w3-text-grey w3-wide">•    •    •    •    •    •    •    •    •    •    •    •    •    •</h4>
+    </div>
+    <!--step 3-->
+    <div class="w3-container w3-cell w3-mobile w3-center w3-padding-24">
+        <h1 class="w3-jumbo w3-hide-small">3</h1>
+        <h3 class="w3-xlarge w3-torquise"><strong>CHECK EACH OTHERS FEEDBACK</strong></h3>
+        <h4 class="w3-large">Review survey and give feedback with our simple platform, with the option of hiding the reviewers name.</h4>
+    </div>
+    </div><!--3 step description ENDS-->
+    <!--      Log In screen-->
+    <div class="w3-modal" id="login">
+        <div class="w3-modal-content w3-animate-opacity">
+            <div class="w3-container w3-card">
+                <span onclick="document.getElementById('login').style.display='none'"
+                class="w3-button w3-display-topright">&times;</span>
+                <header class="w3-blue">
+                    <h3 class="w3-xlarge">Make New Account</h3>
+                </header>
+                <form class="w3-container">
+                    <div class="w3-row">
+                        <div class="w3-third">
+                            <p>First Name:</p>
+                            <input class="w3-input" type="text">
+                        </div>
+                        <div class="w3-half w3-margin-left">
+                            <p>Last Name:</p>
+                            <input class="w3-input" type="text">
+                        </div>
+                    </div>
+                    <p>Email</p>
+                    <input class="w3-input" type="text">
+                    <p>Create a Password</p>
+                    <input class="w3-input" type="text">
+                    <p>Retype Password</p>
+                    <input class="w3-input w3-margin-bottom " type="text">
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php
+    require "compose/HTML_foot.php";

@@ -17,6 +17,3 @@ if (!array_key_exists('route', $_SESSION)) {$_SESSION['route'] = '';}
 
 require_once 'include/router.php';
 require_once 'include/events.php';
-
-$_SESSION["user"] = ""; //DEBUG
-$_SESSION["user"] = "someone"; //DEBUG

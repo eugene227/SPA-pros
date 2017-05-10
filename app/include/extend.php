@@ -1,5 +1,10 @@
 <?php
 
+function getvalue($array, $key)
+{
+    return (array_key_exists($key, $array)) ? $array[$key] : null;
+}
+
 function show($value) {
     echo $value . "<br>";
 }

@@ -20,7 +20,7 @@ switch ($method) {
 
 function dispatch($request)
 {
-    echo dump($request);
+    // echo dump($request); // DEBUG
     $event = "{splash}";
 
     foreach ($request as $key => $_) {

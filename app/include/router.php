@@ -1,7 +1,11 @@
 <?php
 
-define('USER_ROUTE', '{home}.php');
-define('GUEST_ROUTE', '{splash}.php');
+define('USER_ROUTE', '{dev-home}.php');
+define('GUEST_ROUTE', '{dev-landing}.php');
+
+function safe_route() {
+    route($_SESSION['user'] ? USER_ROUTE : GUEST_ROUTE);
+}
 
 function sentry($__FILE__)
 {
@@ -17,12 +21,13 @@ function sentry($__FILE__)
     
     applog("   (rerouted)");
     
-    route($_SESSION['user'] ? USER_ROUTE : GUEST_ROUTE);
+    safe_route();
     exit;
 }
 
-function route($route)
+function route($route = FALSE)
 {
+    if (!$route) {safe_route();}
     applog("Routed to $route");
     if (".php" != substr($route, -4)) {$route .= ".php";}
     $_SESSION['route'] = $route;

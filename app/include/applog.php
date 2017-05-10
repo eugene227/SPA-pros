@@ -14,7 +14,7 @@ function applog($entry)
 
     $_SESSION["applog"][$logtime] = $entry;
 
-    show_log_entry($logtime); // DEBUG
+    // show_log_entry($logtime); // DEBUG
 }
 
 function show_log_entry($logtime)
