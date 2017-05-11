@@ -37,7 +37,7 @@ $_REQUEST["*VALID*"] = [
     "first_name" => (!!$_REQUEST["first_name"]),
     "last_name"  => (!!$_REQUEST["last_name"]),
     "email"      => (!!$_REQUEST["email"]),
-    "password"   => "Please specify a password.",
+    "password"   => true,
 ];
 
 // echo dump($_REQUEST); // DEBUG
@@ -49,5 +49,7 @@ foreach ($_REQUEST["*VALID*"] as $_ => $valid) {
         route("{dev-register}");
     }
 }
+
+$_REQUEST = []; // FIXME (a better way to handle this?)
 
 route("{dev-login}");

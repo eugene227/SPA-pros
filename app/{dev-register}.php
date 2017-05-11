@@ -38,7 +38,7 @@ if ($validation) {
 }
 ?>
 
-<form class="w3-container">
+<form class="w3-container" method="post" action="event.php">
     <label class="w3-text-teal"><b>First Name</b></label>
     <input class="w3-input w3-border w3-light-grey" type="text" name="first_name"
         value="<?php echo htmlentities($first_name); ?>">
@@ -51,11 +51,9 @@ if ($validation) {
     <label class="w3-text-teal"><b>Password</b></label>
     <input class="w3-input w3-border w3-light-grey" type="text" name="password"
         value="<?php echo htmlentities($password); ?>">
-    <button class="w3-btn w3-blue-grey" name="{exec-register}">Register</button>
+    <button class="w3-btn w3-blue-grey w3-right" name="{exec-register}">Register</button>
 </form>
 
 <?php
-
-unset($_SESSION["exec_register"]);
 
 require "compose/HTML_foot.php";

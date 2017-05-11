@@ -21,7 +21,7 @@ switch ($method) {
 function dispatch($request)
 {
     // echo dump($request); // DEBUG
-    $event = "{splash}";
+    $event = "{dev-landing}";
 
     foreach ($request as $key => $_) {
         if ("{" != substr($key, 0, 1)) {continue;}
