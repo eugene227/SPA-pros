@@ -1,55 +1,49 @@
 <?php
 
-error_reporting(-1); // Report all PHP errors (E_ALL)
-ini_set("display_errors", true);
-ini_set("log_errors", false);
-
 require "app.php";
-// sentry(__FILE__);
+sentry(__FILE__);
 
-// echo dump("running {er}"); // DEBUG
-
-// $_REQUEST["first_name"] = " ";
-// $_REQUEST["last_name"]  = "User     ";
-// $_REQUEST["email"]      = "au@gold.net";
-// $_REQUEST["password"]   = " topsecret ";
+// assume $_REQUEST is populated with unvalidated data
 
 $_REQUEST["first_name"] = trim($_REQUEST["first_name"]);
 $_REQUEST["last_name"]  = trim($_REQUEST["last_name"]);
 $_REQUEST["email"]      = trim($_REQUEST["email"]);
-// $_REQUEST["password"]   = $_REQUEST["password"];
 
-$_REQUEST["*LABEL*"] = [
-    "first_name" => "First Name",
-    "last_name"  => "Last Name",
-    "email"      => "Email Address",
-    "password"   => "Password",
+$_REQUEST["*VALIDATION*"] = [
+    "first_name" => [],
+    "last_name"  => [],
+    "email"      => [],
+    "password"   => [],
 ];
 
-$_REQUEST["*EMPTY_MSG*"] = [
-    "first_name" => "Please enter your first name.",
-    "last_name"  => "Please enter your last name.",
-    "email"      => "Please enter your email address.",
-    "password"   => "Please specify a password.",
-];
+$V = &$_REQUEST["*VALIDATION*"];
 
-$_REQUEST["*VALID*"] = [
-    "first_name" => (!!$_REQUEST["first_name"]),
-    "last_name"  => (!!$_REQUEST["last_name"]),
-    "email"      => (!!$_REQUEST["email"]),
-    "password"   => true,
-];
+if (!$_REQUEST["first_name"]) {$V["first_name"][] = "Please enter first name.";}
+if (!$_REQUEST["last_name"]) {$V["last_name"][] = "Please enter last name.";}
+if (!$_REQUEST["email"]) {$V["email"][] = "Please enter email address.";}
 
-// echo dump($_REQUEST); // DEBUG
-
-$valid = true;
-
-foreach ($_REQUEST["*VALID*"] as $_ => $valid) {
-    if (!$valid) {
-        route("{register}");
+    if ((bool) $_REQUEST["email"]) {
+        // prevent duplicate email address
+        $email  = $db->lexify("'" . $_REQUEST["email"]); //FIXME ugly
+        $result = $db->table_select("user", "*", "email = {$email}");
+        if (count($result) > 0) {
+            $V["email"][] = "Email Address already in use.";
+        }
     }
-}
 
-$_REQUEST = []; // FIXME (a better way to handle this?)
+    foreach ($_REQUEST["*VALIDATION*"] as $_ => $problems) {
+        if ($problems) {route("{register}");}
+    }
 
-route("{login}");
+    $data = [
+        "id"         => " NULL",
+        "first_name" => "'" . $_REQUEST["first_name"],
+        "last_name"  => "'" . $_REQUEST["last_name"],
+        "email"      => "'" . $_REQUEST["email"],
+        "password"   => "'" . $_REQUEST["password"],
+    ];
+
+    $db->table_insert("user", $data);
+
+    $_REQUEST = ["email" => $_REQUEST["email"]];
+    route("{login}");

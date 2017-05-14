@@ -5,6 +5,10 @@ $title = "DEVELOPMENT Landing";
 require "compose/HTML_head.php";
 ?>
 
+<?php
+    // $db->init_database("pros"); // DEBUG
+?>
+
 <div class="w3-bar w3-border w3-light-blue w3-xlarge">
     <span class="w3-bar-item w3-left">
         <?php echo basename(__FILE__); ?>

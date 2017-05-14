@@ -1,20 +1,12 @@
 <?php
 
-error_reporting(-1); // Report all PHP errors (E_ALL)
-ini_set('display_errors', true);
-ini_set('log_errors', false);
-
-function out($value)
-{
-    print "<pre>";
-    print_r($value);
-    print "</pre>";
-}
-
-$password = "team3password";
+define("PROS_PASSWORD", "team3password"); // FIXME
 
 class PROS
 {
+    public function ping($msg = "")
+    {$this->out("ping $msg");}
+
     public $server   = null; // mysqli connection
     public $database = "pros";
 
@@ -131,33 +123,6 @@ CREATE TABLE `evaluation_item`
     ];
 
 /*---------------------------------------------------------------------*\
-|   error logging                                                       |
-\*---------------------------------------------------------------------*/
-
-    public $error_log = [];
-
-    public function out($value)
-    {
-        print "<pre>";
-        print_r($value);
-        print "</pre>";
-    }
-
-    public function log($error_message)
-    {
-        $this->error_log[] = $error_message;
-        return $this;
-    }
-
-    public function print_log()
-    {
-        foreach ($this->error_log as $_ => $error_message) {
-            echo "<p>{$error_message}</p>";
-        }
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
 |   connect to server on construct                                      |
 \*---------------------------------------------------------------------*/
 
@@ -182,6 +147,18 @@ CREATE TABLE `evaluation_item`
     }
 
 /*---------------------------------------------------------------------*\
+|   execute query and log errors                                        |
+\*---------------------------------------------------------------------*/
+
+    public function query($sql)
+    {
+        $result = $this->server->query($sql);
+        if ($result) {return $result;}
+        $this->log("Query Error: {$this->server->error}");
+        return false;
+    }
+
+/*---------------------------------------------------------------------*\
 |   set the name of the active PROS database                            |
 \*---------------------------------------------------------------------*/
 
@@ -189,19 +166,6 @@ CREATE TABLE `evaluation_item`
     {
         $this->database = $database;
         return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   execute query and log errors                                        |
-\*---------------------------------------------------------------------*/
-
-    public function query($sql)
-    {
-        $result = $this->server->query($sql);
-        if (!$result) {
-            $this->log("Query Error: {$this->server->error}");
-        }
-        return $result;
     }
 
 /*---------------------------------------------------------------------*\
@@ -324,7 +288,7 @@ CREATE TABLE `evaluation_item`
     public function table_count($table)
     {
         $sql = "SELECT COUNT(*) FROM {$table};";
-        return intval($this->query($sql)->fetch_assoc()["COUNT(*)"]);
+        return intval($this->query($sql)["COUNT(*)"]);
     }
 
 /*---------------------------------------------------------------------*\
@@ -364,6 +328,50 @@ CREATE TABLE `evaluation_item`
         $sql    = "SELECT {$columns} FROM {$table} {$where} ;";
         $result = $this->query($sql);
         return $this->fetch_all($result);
+    }
+
+/*---------------------------------------------------------------------*\
+|   get_question_versions($id)                                          |
+\*---------------------------------------------------------------------*/
+
+    // public function get_question_versions($id)
+    // {
+    //     $result = $this->table_select("question", "version", "id = $id");
+    //     $id     = $result["version"];
+    //     $result = $this->table_select("version", "asset", "id = $id");
+    //     $asset  = $result["asset"];
+    //     $result = $this->table_select("version", "*", "asset = $asset");
+    // }
+
+/*---------------------------------------------------------------------*\
+|   error logging                                                       |
+\*---------------------------------------------------------------------*/
+
+    public $error_log = [];
+
+    public function log($error_message)
+    {
+        $this->error_log[] = $error_message;
+        return $this;
+    }
+
+    public function print_log()
+    {
+        foreach ($this->error_log as $_ => $error_message) {
+            echo "<p>{$error_message}</p>";
+        }
+        return $this;
+    }
+
+/*---------------------------------------------------------------------*\
+|   miscellaneous methods                                               |
+\*---------------------------------------------------------------------*/
+
+    public function out($value)
+    {
+        print "<pre>";
+        print_r($value);
+        print "</pre>";
     }
 
 }

@@ -1,12 +1,35 @@
 <?php
 
+function flatten_values($array) {
+    $collect = [];
+    function walk($array, &$collect) {
+        foreach ($array as $_ => $value) {
+            if (is_array($value)) {
+                walk($value, $collect);
+            } else {
+                $collect[] = $value;
+            }
+        }
+    }
+    walk($array, $collect);
+    return $collect;
+}
+
+function out($value)
+{
+    print "<pre>";
+    print_r($value);
+    print "</pre>";
+}
+
 function getvalue($array, $key)
 {
     return (array_key_exists($key, $array)) ? $array[$key] : null;
 }
 
 function show($value) {
-    echo $value . "<br>";
+    // echo $value . "<br>";
+    out($value);
 }
 
 function dump($value)

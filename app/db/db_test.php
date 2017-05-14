@@ -1,14 +1,12 @@
 <?php
 
-error_reporting(-1); // Report all PHP errors (E_ALL)
+ini_set('error_reporting', E_ALL); // report all PHP errors
 ini_set('display_errors', true);
 ini_set('log_errors', false);
 
-require "db.php";
+require_once "db.php";
 
-$password = "team3password";
-
-$db = new PROS($password);
+$db = new PROS("team3password");
 $db->init_database("pros");
 $db->use_database("pros");
 
