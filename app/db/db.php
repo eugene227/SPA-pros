@@ -19,7 +19,120 @@ class PROS
     public $database = "pros";
 
 /*---------------------------------------------------------------------*\
-|   error loggin                                                        |
+|   define schema                                                       |
+\*---------------------------------------------------------------------*/
+
+    public $schema = [
+
+        "user"            => "
+CREATE TABLE `user`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `email`       TEXT NOT NULL ,
+  `first_name`  TEXT NOT NULL ,
+  `last_name`   TEXT NOT NULL ,
+  `password`    TEXT NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "asset"           => "
+CREATE TABLE `asset`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+SQL",
+
+        "version"         => "
+CREATE TABLE `version`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `asset`       INT UNSIGNED NOT NULL , # foreign key asset(id)
+  `owner`       INT UNSIGNED NOT NULL , # foreign key user(id)
+  `timestamp`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `private`     BOOLEAN NOT NULL DEFAULT TRUE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "choice_list"     => "
+CREATE TABLE `choice_list`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
+  `list`        TEXT NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "question"        => "
+CREATE TABLE `question`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
+  `text`        TEXT NOT NULL ,
+  `analysis`    TEXT,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "survey"          => "
+CREATE TABLE `survey`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
+  `title`       TEXT NOT NULL ,
+  `items`       TEXT NOT NULL ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "survey_item"     => "
+CREATE TABLE `survey_item`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `question`    INT UNSIGNED NOT NULL , # foreign key question(id)
+  `choices`     TEXT NOT NULL ,
+  `explanation` BOOLEAN NOT NULL DEFAULT TRUE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "process"         => "
+CREATE TABLE `process`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `survey`      INT UNSIGNED NOT NULL , # foreign key process(id)
+  `begin`       DATETIME ,
+  `end`         DATETIME ,
+  `invitation`  TEXT ,
+  `status`      TEXT NOT NULL ,
+# status = (string) proposed, cancelled, running, completed, draft
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "process_user"    => "
+CREATE TABLE `process_user`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
+  `user`        INT UNSIGNED NOT NULL , # foreign key user(id)
+  `accepted`    BOOLEAN NOT NULL DEFAULT FALSE ,
+  `overseer`    BOOLEAN NOT NULL DEFAULT FALSE ,
+  `peer`        BOOLEAN NOT NULL DEFAULT FALSE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "evaluation"      => "
+CREATE TABLE `evaluation`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
+  `reviewer`    INT UNSIGNED NOT NULL , # foreign key user(id)
+  `reviewee`    INT UNSIGNED NOT NULL , # foreign key user(id)
+  `complete`    BOOLEAN NOT NULL DEFAULT FALSE ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+
+        "evaluation_item" => "
+CREATE TABLE `evaluation_item`
+( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `evaluation`  INT UNSIGNED NOT NULL , # foreign key evaluation(id)
+  `item`        INT UNSIGNED NOT NULL , # foreign key survey(id)
+  `choice`      TEXT ,
+  `explanation` TEXT ,
+  `analysis`    TEXT ,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;",
+    ];
+
+/*---------------------------------------------------------------------*\
+|   error logging                                                       |
 \*---------------------------------------------------------------------*/
 
     public $error_log = [];
@@ -58,6 +171,15 @@ class PROS
         }
         $this->server->set_charset('utf8');
         return $this;
+    }
+
+/*---------------------------------------------------------------------*\
+|   close server connection on destruct                                 |
+\*---------------------------------------------------------------------*/
+
+    public function __destruct()
+    {
+        $this->server->close();
     }
 
 /*---------------------------------------------------------------------*\
@@ -119,7 +241,7 @@ class PROS
         $this->query("SET foreign_key_checks = 0");
 
         if ($result = $this->query("SHOW TABLES")) {
-            while ($row = $result->fetch_array(server_NUM)) {
+            while ($row = $result->fetch_array(MYSQLI_NUM)) {
                 $this->query("DROP TABLE IF EXISTS " . $row[0]);
             }
         }
@@ -128,400 +250,20 @@ class PROS
     }
 
 /*---------------------------------------------------------------------*\
-|   close server connction on destruct                                  |
-\*---------------------------------------------------------------------*/
-
-    public function __destruct()
-    {
-        $this->server->close();
-    }
-
-/*---------------------------------------------------------------------*\
-|   define schema                                                       |
-\*---------------------------------------------------------------------*/
-
-    public $schema = [
-        "user"           => <<<SQL
-CREATE TABLE `user`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `email`       TEXT NOT NULL ,
-  `first_name`  TEXT NOT NULL ,
-  `last_name`   TEXT NOT NULL ,
-  `password`    TEXT NOT NULL ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "asset"          =><<<SQL
-CREATE TABLE `asset`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "version"        =><<<SQL
-CREATE TABLE `version`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `asset`       INT UNSIGNED NOT NULL , # foreign key asset(id)
-  `owner`       INT UNSIGNED NOT NULL , # foreign key user(id)
-  `timestamp`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `private`     BOOLEAN NOT NULL DEFAULT TRUE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "choice_list"    =><<<SQL
-CREATE TABLE `choice_list`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
-  `list`        TEXT NOT NULL ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "question"       =><<<SQL
-CREATE TABLE `question`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
-  `text`        TEXT NOT NULL ,
-  `analysis`    TEXT,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "survey"         =><<<SQL
-CREATE TABLE `survey`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
-  `title`       TEXT NOT NULL ,
-  `items`       TEXT NOT NULL ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "survey_item"    =><<<SQL
-CREATE TABLE `survey_item`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `question`    INT UNSIGNED NOT NULL , # foreign key question(id)
-  `choices`     TEXT NOT NULL ,
-  `explanation` BOOLEAN NOT NULL DEFAULT TRUE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "process"        =><<<SQL
-CREATE TABLE `process`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `survey`      INT UNSIGNED NOT NULL , # foreign key process(id)
-  `begin`       DATETIME ,
-  `end`         DATETIME ,
-  `invitation`  TEXT ,
-  `status`      TEXT NOT NULL ,
-# status = "proposed", "cancelled", "running", "completed", "draft"
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "process_user"   =><<<SQL
-CREATE TABLE `process_user`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
-  `user`        INT UNSIGNED NOT NULL , # foreign key user(id)
-  `accepted`    BOOLEAN NOT NULL DEFAULT FALSE ,
-  `overseer`    BOOLEAN NOT NULL DEFAULT FALSE ,
-  `peer`        BOOLEAN NOT NULL DEFAULT FALSE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "evaluation"     =><<<SQL
-CREATE TABLE `evaluation`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
-  `reviewer`    INT UNSIGNED NOT NULL , # foreign key user(id)
-  `reviewee`    INT UNSIGNED NOT NULL , # foreign key user(id)
-  `complete`    BOOLEAN NOT NULL DEFAULT FALSE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-        ,
-        "evaluation_item"=><<<SQL
-CREATE TABLE `evaluation_item`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `evaluation`  INT UNSIGNED NOT NULL , # foreign key evaluation(id)
-  `item`        INT UNSIGNED NOT NULL , # foreign key survey(id)
-  `choice`      TEXT ,
-  `explanation` TEXT ,
-  `analysis`    TEXT ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL
-    ];
-
-/*---------------------------------------------------------------------*\
-|   create `user` table                                                 |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_user()
-    {
-        $sql = <<<SQL
-CREATE TABLE `user`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `email`       TEXT NOT NULL ,
-  `first_name`  TEXT NOT NULL ,
-  `last_name`   TEXT NOT NULL ,
-  `password`    TEXT NOT NULL ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `asset` table                                                |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_asset()
-    {
-        $sql = <<<SQL
-CREATE TABLE `asset`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `version` table                                              |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_version()
-    {
-        $sql = <<<SQL
-CREATE TABLE `version`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `asset`       INT UNSIGNED NOT NULL , # foreign key asset(id)
-  `owner`       INT UNSIGNED NOT NULL , # foreign key user(id)
-# `timestamp`   TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP, # MySQL 5.6.4+
-  `timestamp`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-# `latest`      BOOLEAN NOT NULL DEFAULT TRUE ,
-  `private`     BOOLEAN NOT NULL DEFAULT TRUE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-// FIXME
-    // $sql .= <<<SQL
-    // ALTER TABLE `{$this->database}`.`version` ADD FOREIGN KEY(asset)
-    // REFERENCES asset(id) ON UPDATE RESTRICT ON DELETE RESTRICT ;
-    // SQL;
-
-/*---------------------------------------------------------------------*\
-|   create `choice_list` table                                          |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_choice_list()
-    {
-        $sql = <<<SQL
-CREATE TABLE `choice_list`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
-  `list`        TEXT NOT NULL ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `question` table                                             |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_question()
-    {
-        $sql = <<<SQL
-CREATE TABLE `question`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
-  `text`        TEXT NOT NULL ,
-  `analysis`    TEXT,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `survey` table                                               |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_survey()
-    {
-        $sql = <<<SQL
-CREATE TABLE `survey`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `version`     INT UNSIGNED NOT NULL , # foreign key version(id)
-  `title`       TEXT NOT NULL ,
-  `items`       TEXT NOT NULL ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-
-// items is a CSV (ordered) list of list of survey_item(id)s
-
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `survey_item` table                                          |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_survey_item()
-    {
-        $sql = <<<SQL
-CREATE TABLE `survey_item`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `question`    INT UNSIGNED NOT NULL , # foreign key question(id)
-  `choices`     TEXT NOT NULL ,
-  `explanation` BOOLEAN NOT NULL DEFAULT TRUE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `process` table                                              |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_process()
-    {
-        $sql = <<<SQL
-CREATE TABLE `process`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `survey`      INT UNSIGNED NOT NULL , # foreign key process(id)
-  `begin`       DATETIME ,
-  `end`         DATETIME ,
-  `invitation`  TEXT ,
-  `status`      TEXT NOT NULL ,
-# status = "proposed", "cancelled", "running", "completed", "draft"
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `process_user` table                                         |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_process_user()
-    {
-        $sql = <<<SQL
-CREATE TABLE `process_user`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
-  `user`        INT UNSIGNED NOT NULL , # foreign key user(id)
-  `accepted`    BOOLEAN NOT NULL DEFAULT FALSE ,
-  `overseer`    BOOLEAN NOT NULL DEFAULT FALSE ,
-  `peer`        BOOLEAN NOT NULL DEFAULT FALSE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `evaluation` table                                           |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_evaluation()
-    {
-        $sql = <<<SQL
-CREATE TABLE `evaluation`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `process`     INT UNSIGNED NOT NULL , # foreign key process(id)
-  `reviewer`    INT UNSIGNED NOT NULL , # foreign key user(id)
-  `reviewee`    INT UNSIGNED NOT NULL , # foreign key user(id)
-  `complete`    BOOLEAN NOT NULL DEFAULT FALSE ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
-|   create `evaluation_item` table                                      |
-\*---------------------------------------------------------------------*/
-
-    public function create_table_evaluation_item()
-    {
-        $sql = <<<SQL
-CREATE TABLE `evaluation_item`
-( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `evaluation`  INT UNSIGNED NOT NULL , # foreign key evaluation(id)
-  `item`        INT UNSIGNED NOT NULL , # foreign key survey(id)
-  `choice`      TEXT ,
-  `explanation` TEXT ,
-  `analysis`    TEXT ,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL;
-        $this->query($sql);
-        return $this;
-    }
-
-/*---------------------------------------------------------------------*\
 |   create_table(table) --> (error_code)                                |
 \*---------------------------------------------------------------------*/
 
     public function create_table($table)
     {
-        // $this->out("create_table($table)");
         $result = $this->query($this->schema[$table]);
-        // $this->out("$result");
         return $this;
     }
 
 /*---------------------------------------------------------------------*\
-|   WARNING!!!                                                          |
 |   init_database()                                                     |
-|   THIS CODE WILL **NUKE** THE ACTIVE PROS DATABASE                    |
+|   WARNING!!!                                                          |
+|   THIS METHOD WILL **NUKE** THE ACTIVE PROS DATABASE                  |
 \*---------------------------------------------------------------------*/
-
-    // public function init_database($name)
-    // {
-    //     $this
-    //         ->drop_database($name)
-    //         ->create_database($name)
-    //         ->use_database($name)
-    //         ->create_table_user()
-    //         ->create_table_asset()
-    //         ->create_table_version()
-    //         ->create_table_choice_list()
-    //         ->create_table_question()
-    //         ->create_table_survey()
-    //         ->create_table_survey_item()
-    //         ->create_table_process()
-    //         ->create_table_process_user()
-    //         ->create_table_evaluation()
-    //         ->create_table_evaluation_item()
-    //     ;
-    //     return $this;
-    // }
 
     public function init_database($name)
     {
