@@ -1,7 +1,7 @@
 <?php
 
-define('USER_ROUTE', '{dev-home}.php');
-define('GUEST_ROUTE', '{dev-landing}.php');
+define('USER_ROUTE', '{home}.php');
+define('GUEST_ROUTE', '{landing}.php');
 
 function safe_route()
 {

@@ -3,4 +3,4 @@
 require 'app.php';
 sentry(__FILE__);
 
-route("{landing}");
+echo '<h1>Login</h1>';

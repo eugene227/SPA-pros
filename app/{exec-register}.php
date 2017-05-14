@@ -46,10 +46,10 @@ $valid = true;
 
 foreach ($_REQUEST["*VALID*"] as $_ => $valid) {
     if (!$valid) {
-        route("{dev-register}");
+        route("{register}");
     }
 }
 
 $_REQUEST = []; // FIXME (a better way to handle this?)
 
-route("{dev-login}");
+route("{login}");

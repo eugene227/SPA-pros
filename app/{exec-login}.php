@@ -29,7 +29,7 @@ $valid = true;
 
 foreach ($_REQUEST["*VALID*"] as $_ => $valid) {
     if (!$valid) {
-        route("{dev-login}");
+        route("{login}");
     }
 }
 
@@ -41,9 +41,9 @@ if ("bad" == $_REQUEST["password"]) {
         "email"    => true,
         "password" => false,
     ];
-    route("{dev-login}");
+    route("{login}");
 }
 
 $_SESSION["user"] = $_REQUEST["email"];
     
-route("{dev-home}");
+route("{home}");
