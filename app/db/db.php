@@ -38,8 +38,7 @@ CREATE TABLE `user`
 CREATE TABLE `asset`
 ( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-SQL",
+) ENGINE = InnoDB;",
 
         "version"         => "
 CREATE TABLE `version`

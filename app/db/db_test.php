@@ -30,19 +30,19 @@ $db->use_database("pros");
 
 // // $rows = $db->table_select("user", "*", "id = 2");
 // $rows = $db->table_select("user", "*");
-// // out($rows);
+// out($rows);
 
 // $data = [
-//     "last_name"  => "'O'Peersley",
+//     "last_name" => "'O'Peersley",
 // ];
 
 // $id = $db->table_update("user", $data, "id = 2");
 
 // $rows = $db->table_select("user", "*");
-// // out($rows);
+// out($rows);
 
-// // out($db->count("user"));
-// // out($id);
+// out("user:id = $id");
+// out("user(count) = " . $db->table_count("user"));
 
 /*---------------------------------------------------------------------*\
 |   test asset table                                                    |
@@ -63,20 +63,23 @@ $db->use_database("pros");
 |   test version table                                                  |
 \*---------------------------------------------------------------------*/
 
-$data = [
-    "id"        => " NULL",
-    "asset"     => " 1",
-    "owner"     => " 1",
-    "timestamp" => " NULL",
-    "private"   => " TRUE",
-];
+// $data = [
+//     "id"        => " NULL",
+//     "asset"     => " 1",
+//     "owner"     => " 1",
+//     "timestamp" => " NULL",
+//     "private"   => " TRUE",
+// ];
 
-$id = $db->table_insert("version", $data);
-$id = $db->table_insert("version", $data);
-$id = $db->table_insert("version", $data);
+// $id = $db->table_insert("version", $data);
+// $id = $db->table_insert("version", $data);
+// $id = $db->table_insert("version", $data);
 
-$rows = $db->table_select("version", "*");
-out($rows);
+// $rows = $db->table_select("version", "*");
+// out($rows);
+
+// out("version:id = $id");
+// out("version(count) = " . $db->table_count("version"));
 
 /*---------------------------------------------------------------------*\
 \*---------------------------------------------------------------------*/
