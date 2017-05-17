@@ -7,7 +7,7 @@ require "compose/HTML_head.php";
 ?>
 
 <?php
-// $db->init_database("pros", $foreigh_key_checks = true); // DEBUG
+$db->init_database("pros", $foreigh_key_checks = true); // DEBUG
 // $_SESSION["user"] = "dr";
 // route("{home}");
 ?>

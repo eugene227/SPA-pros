@@ -26,14 +26,15 @@ function sentry($__FILE__)
     exit;
 }
 
-function route($route = false)
+function route($route = false, $uipath = "")
 {
+    $uipath = "ui_dev/"; // DEBUG
     // echo dump("route($route)"); // DEBUG
-
+    
     if (!$route) {safe_route();}
     applog("Routed to $route");
     if (".php" != substr($route, -4)) {$route .= ".php";}
     $_SESSION['route'] = $route;
-    require $route;
+    require $uipath . $route;
     exit;
 }

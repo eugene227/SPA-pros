@@ -20,4 +20,6 @@ require_once "include/events.php";
 
 require_once "db/db.php";
 
-if (!isset($db)) {$db = (new PROS(PROS_PASSWORD))->use_database("pros");}
+$PROS_PASSWORD ="wet71tech";
+$PROS_PASSWORD ="team3password";
+if (!isset($db)) {$db = (new PROS($PROS_PASSWORD))->use_database("pros");}

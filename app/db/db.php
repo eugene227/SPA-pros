@@ -1,7 +1,5 @@
 <?php
 
-define("PROS_PASSWORD", "team3password"); // FIXME
-
 class PROS
 {
     public function ping($msg = "")
@@ -9,10 +7,6 @@ class PROS
 
     public $server   = null; // mysqli connection
     public $database = "pros";
-
-/*---------------------------------------------------------------------*\
-|   define schema                                                       |
-\*---------------------------------------------------------------------*/
 
     public $schema = [
 
@@ -72,8 +66,8 @@ CREATE TABLE `survey`
 CREATE TABLE `survey_item`
 ( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `question`    INT UNSIGNED NOT NULL , # foreign key question(id)
-  `choices`     TEXT NOT NULL ,
-  `explanation` BOOLEAN NOT NULL DEFAULT TRUE ,
+  `choices`     INT UNSIGNED NOT NULL , # foreign key choice_list(id)
+# `explanation` BOOLEAN NOT NULL DEFAULT TRUE ,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;",
 
@@ -114,12 +108,34 @@ CREATE TABLE `evaluation`
 CREATE TABLE `evaluation_item`
 ( `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `evaluation`  INT UNSIGNED NOT NULL , # foreign key evaluation(id)
-  `item`        INT UNSIGNED NOT NULL , # foreign key survey(id)
+  `item`        INT UNSIGNED NOT NULL , # foreign key survey_item(id)
   `choice`      TEXT ,
   `explanation` TEXT ,
   `analysis`    TEXT ,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;",
+    ];
+
+/*---------------------------------------------------------------------*\
+|   define foreign key checks                                           |
+\*---------------------------------------------------------------------*/
+
+    public $foreign_key_checks = [
+        ['version', 'asset', 'asset'],
+        ['version', 'owner', 'user'],
+        ['choice_list', 'version', 'version'],
+        ['question', 'version', 'version'],
+        ['survey', 'version', 'version'],
+        ['survey_item', 'question', 'question'],
+        ['survey_item', 'choices', 'choice_list'],
+        ['process', 'survey', 'survey'],
+        ['process_user', 'process', 'process'],
+        ['process_user', 'user', 'user'],
+        ['evaluation', 'process', 'process'],
+        ['evaluation', 'reviewer', 'user'],
+        ['evaluation', 'reviewee', 'user'],
+        ['evaluation_item', 'evaluation', 'evaluation'],
+        ['evaluation_item', 'item', 'survey_item'],
     ];
 
 /*---------------------------------------------------------------------*\
@@ -223,12 +239,32 @@ CREATE TABLE `evaluation_item`
     }
 
 /*---------------------------------------------------------------------*\
-|   init_database()                                                     |
-|   WARNING!!!                                                          |
-|   THIS METHOD WILL **NUKE** THE ACTIVE PROS DATABASE                  |
+|   init_foreign_key_checks()                                           |
 \*---------------------------------------------------------------------*/
 
-    public function init_database($name)
+    public function init_foreign_key_checks()
+    {
+        foreach ($this->foreign_key_checks as $_ => $tuple) {
+            $table       = $tuple[0];
+            $foreign_key = $tuple[1];
+            $references  = $tuple[2];
+            $sql         = <<<SQL
+ALTER TABLE {$table} ADD FOREIGN KEY({$foreign_key})
+REFERENCES {$references}(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+SQL;
+            $this->out($sql);
+            $result = $this->query($sql);
+            $this->out(($result) ? "succeeded" : "failed");
+        }
+    }
+
+/*---------------------------------------------------------------------*\
+|   init_database()                                                     |
+|   WARNING!!!                                                          |
+|   THIS METHOD WILL **NUKE** THE NAMED PROS DATABASE                   |
+\*---------------------------------------------------------------------*/
+
+    public function init_database($name, $foreign_key_checks = true)
     {
         $this
             ->drop_database($name)
@@ -237,7 +273,7 @@ CREATE TABLE `evaluation_item`
         foreach ($this->schema as $table => $_) {
             $this->create_table($table);
         }
-        return $this;
+        if ($foreign_key_checks) {$this->init_foreign_key_checks();}
     }
 
     public function lexify($value)
