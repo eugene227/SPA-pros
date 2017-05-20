@@ -17,65 +17,21 @@ function pout(_string) {
     element.appendChild(document.createTextNode(_string));
     body.insertBefore(element, body.firstChild);
 }
+
+function cout(_string) {
+    var body = document.body;
+    var element = document.createElement('pre');
+    element.appendChild(document.createTextNode(_string));
+    body.insertBefore(element, body.firstChild);
+}
 //=================================================================
-//   url hash routing
+//   routing
 //=================================================================
-$(window).bind("hashchange", function(event) {
-    hash = window.location.hash;
-    pout(hash);
-});
+var STATE = {};
+STATE["hint"] = "program state information should be kept here";
 
-function hashCompile(_array) {
-    return Object.getOwnPropertyNames(_array).map(function(name) {
-        value = _array[name];
-        if (false === value) return "";
-        return (true === value) ? name : (name + "=" + value);
-    }).join("_");
-}
-
-function hashParse() {
-    var result = {};
-    hash = window.location.hash.slice(1);
-    items = hash.split("_");
-    for (item of items) {
-        item = item.split('=');
-        result[item[0]] = ((1 === item.length) ? true : item[1])
-    }
-    return result;
-}
-
-function hashUpdate(_string) {
-    window.location.hash = _string
-}
-
-function hashSet(name, value = true) {
-    hash = hashParse();
-    hash[name] = value;
-    hash = hashCompile(hash);
-    hashUpdate(hash);
-}
-
-function hashUnset(name) {
-    hash = hashParse();
-    hash[name] = false;
-    delete hash[name];
-    hash = hashCompile(hash);
-    hashUpdate(hash);
-}
-
-function hashToggle(name, value = true) {
-    hash = hashParse();
-    if (name in hash) {
-        delete hash[name];
-    } else {
-        hash[name] = value;
-    }
-    hash = hashCompile(hash);
-    hashUpdate(hash);
-}
-
-function hashHide() {
-    history.pushState("", document.title, window.location.pathname + window.location.search);
+function ROUTER(hashlist) {
+    aout(hashlist);
 }
 //=================================================================
 //   test buttons
