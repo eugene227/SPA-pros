@@ -1,14 +1,38 @@
+var PAGE = {};
 //=================================================================
+// routing
+//=================================================================
+function ROUTER(json) {
+    keys = Object.keys(PAGE);
+    // pout("router");
+    for (page of keys) {
+        if (!(json.hasOwnProperty(page))) {
+            HIDE(page);
+        }
+    }
+    for (page of keys) {
+        if (json.hasOwnProperty(page)) {
+            SHOW(page);
+        }
+    }
+}
+var GO = hashUpdate;
+
+function HIDE(page) {
+    $(PAGE[page]).addClass("hidden_");
+}
+
+function SHOW(page) {
+    $(PAGE[page]).removeClass("hidden_");
+}//=================================================================
 //   url hash routing
 //=================================================================
-$(window).bind("hashchange", function(event) {
-    ROUTER(hashParse());
-});
-
 function hashParse() {
-    var result = {};
+    let result = {};
     hash = window.location.hash.slice(1);
-    items = hash.split("|");
+    items = hash.split("|").filter(function(item) {
+        return (item != "");
+    });
     for (item of items) {
         item = item.split('=');
         result[item[0]] = ((1 === item.length) ? true : item[1])
@@ -57,3 +81,21 @@ function hashToggle(name, value = true) {
 function hashHide() {
     history.pushState("", document.title, window.location.pathname + window.location.search);
 }
+
+function hashInit() {
+    // pout("hashInit");
+    hash = hashParse(); // save existing hashstate, possibly from bookmark
+    hashUpdate(""); // clear current hashstate
+    hash = hashCompile(hash);
+    $(window).bind("hashchange", function(event) {
+        ROUTER(hashParse());
+    });
+    hashUpdate(hash); // should trigger hashchange
+    // ROUTER(hashParse());
+}
+
+hashInit();
+
+//=================================================================
+// Trigger initial routing.
+//=================================================================

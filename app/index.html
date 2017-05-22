@@ -21,8 +21,75 @@
         <button id="button_C" type="button">C</button>
         <button id="button_D" type="button">D</button>
     </div>
+    <!-- ================= -->
+    <!-- ===  LANDING  === -->
+    <!-- ================= -->
+    <div id="landing" class="w3-bar w3-border w3-light-blue w3-xlarge hidden_">
+        <span class="w3-bar-item w3-left">(Landing)</span>
+        <span class="X_register w3-bar-item w3-button w3-hover-blue w3-right">
+        Register
+    </span>
+        <span class="X_login w3-bar-item w3-button w3-hover-blue w3-right">
+        Login
+    </span>
+    </div>
+    <!-- =============== -->
+    <!-- ===  LOGIN  === -->
+    <!-- =============== -->
+    <div id="login" class="w3-row hidden_">
+        <!--extra space on the LEFT side (only for medium and large screens)-->
+        <div class="w3-col w3-container w3-hide-small" style="width:20%"></div>
+        <div class="w3-col w3-container w3-mobile" style="width:60%">
+            <!--BLUE HEADER STARTS HERE-->
+            <header class="w3-blue w3-card-4">
+                <h3 class="w3-xlarge w3-padding">Login</h3>
+            </header>
+            <!--BLUE HEADER ENDS HERE-->
+            <!--START of card container-->
+            <div class="w3-container w3-card-4">
+                <p class="w3-large">Email</p>
+                <input class="I_email w3-input w3-animate-input" autofocus required autocomplete="on" type="email" style="width:60%" tabindex="1">
+                <p class="w3-large">Enter Password</p>
+                <input class="I_password w3-input w3-animate-input" autocomplete="off" type="password" style="width:60%" tabindex="2" required>
+                <span class="X_login w3-btn w3-right w3-padding w3-margin w3-green" tabindex="3">Login</span>
+            </div>
+            <!--END of card container-->
+        </div>
+        <!--end of 60% width container-->
+        <!--extra space on the RIGHT side (only for medium and large screens)-->
+        <div class="w3-col w3-container w3-hide-small" style="width:20%"></div>
+    </div>
+    <!-- ====================== -->
+    <!-- ===  REGISTRATION  === -->
+    <!-- ====================== -->
+    <div id="registration" class="w3-row hidden_">
+        <div class="w3-col w3-container w3-hide-small" style="width:20%"></div>
+        <div class="w3-col w3-container w3-mobile" style="width:60%">
+            <header class="w3-blue w3-card-4">
+                <h3 class="w3-xlarge w3-padding">Create New Account</h3>
+            </header>
+            <div class="w3-container w3-card-4">
+                <p class="w3-large">First Name</p>
+                <input class="I_first_name w3-input w3-animate-input" autofocus type="text" style="width:60%" tabindex="1" required>
+                <p class="w3-large">Last Name</p>
+                <input class="I_last_name w3-input w3-animate-input" required type="text" style="width:60%" tabindex="2">
+                <p class="w3-large">Email</p>
+                <input class="I_email w3-input w3-animate-input" type="email" style="width:60%" tabindex="3" name="email" required autocomplete="on">
+                <p class="w3-large">Password</p>
+                <input class="I_password w3-input w3-animate-input" type="password" style="width:60%" tabindex="4" required>
+                <p class="w3-large">Retype Password</p>
+                <input class="I_password2 w3-input w3-margin-bottom w3-animate-input" type="password" required tabindex="5" style="width:60%">
+                <span class="X_register w3-btn w3-right w3-padding w3-margin w3-green" tabindex="6"> Sign Up</span>
+            </div>
+            <!--end of card container-->
+        </div>
+        <div class="w3-col w3-container w3-hide-small" style="width:20%"></div>
+    </div>
+    <!--END Register screen-->
+    <script src="script/util.js"></script>
+    <script src="script/router.js"></script>
+    <script src="script/event.js"></script>
     <script src="script/main.js"></script>
-    <script src="script/url_hash.js"></script>
 </body>
 
 </html>

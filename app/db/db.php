@@ -286,6 +286,11 @@ SQL;
         return $value;
     }
 
+    public function quote($value)
+    {
+        return "'" . $value;
+    }
+
     public function sql_keys($array)
     {
         return implode(", ", array_keys($array));
@@ -293,8 +298,12 @@ SQL;
 
     public function sql_values($array)
     {
-        $callback = array("PROS", "lexify");
-        return implode(", ", array_map($callback, array_values($array)));
+        $lexify = array("PROS", "lexify");
+        $quote  = array("PROS", "quote");
+
+        return implode(", ",
+            array_map($lexify,
+                array_map($quote, array_values($array))));
     }
 
     public function sql_updates($array)
@@ -334,10 +343,14 @@ SQL;
 
     public function table_insert($table, $data)
     {
-        $names  = $this->sql_keys($data);
-        $values = $this->sql_values($data);
-        $sql    = "INSERT INTO {$table} ({$names}) VALUES ({$values});";
-        $result = $this->query($sql);
+        $names               = $this->sql_keys($data);
+        $_REQUEST["_names"]  = $names;
+        $values              = $this->sql_values($data);
+        $_REQUEST["_values"] = $values;
+        $sql                 = "INSERT INTO {$table} ({$names}) VALUES ({$values});";
+        $_REQUEST["_sql"]    = $sql;
+        $result              = $this->query($sql);
+        $_REQUEST["_result"] = $result;
         return $this->server->insert_id;
     }
 
