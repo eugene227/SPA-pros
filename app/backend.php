@@ -119,6 +119,14 @@ $DISPATCH["#registration .X_register"] = function ($db) {
 
     SUCCEED();
 };
+/*============*\
+|    REVIEWS   |
+\*============*/
+
+$DISPATCH["#reviews .X______"] = function ($db) {
+
+    SUCCEED();
+};
 
 /*====================*\
 |    D I S P A T C H   |

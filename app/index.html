@@ -32,6 +32,9 @@
         <span class="X_login w3-bar-item w3-button w3-hover-blue w3-right">
         Login
     </span>
+        <span class="X_reviews w3-bar-item w3-button w3-hover-blue w3-right">
+        Reviews
+    </span>
     </div>
     <!-- =============== -->
     <!-- ===  LOGIN  === -->
@@ -84,6 +87,452 @@
             <!--end of card container-->
         </div>
         <div class="w3-col w3-container w3-hide-small" style="width:20%"></div>
+    </div>
+
+    <!-- ================= -->
+    <!-- ===  REVIEWS  === -->
+    <!-- ================= -->
+    
+    <div id="reviews" class="w3-row w3-mobile" style="width:100%">
+        <!--BAR-BLOCK columns-->
+        <div class="w3-col w3-hide-medium w3-hide-small" style="width:7%">
+            <div class="w3-bar-block w3-light-blue w3-center">
+                <div class="tooltip">
+                    <button class="w3-button w3-bar-item w3-hover-light-blue">
+                        <i style="font-size:350%" class=" w3-margin-bottom w3-margin-top fa fa-file-text-o" tabindex="1"></i>
+                        <span class="tooltiptext">My Surveys</span>
+                    </button>
+                </div>
+                <div class="tooltip">
+                    <button class="w3-button w3-bar-item w3-hover-light-blue">
+                        <i style="font-size:350%" class=" w3-margin-bottom w3-margin-top fa fa-pencil-square-o" tabindex="1"></i>
+                        <span class="tooltiptext">Reviews</span>
+                    </button>
+                </div>
+                <div class="tooltip">
+                    <button class="w3-button w3-bar-item w3-hover-light-blue">
+                        <i style="font-size:350%" class=" w3-margin-bottom w3-margin-top fa fa-calendar" tabindex="1"></i>
+                        <span class="tooltiptext">Calender</span>
+                    </button>
+                </div>
+                <div class="tooltip">
+                    <button class="w3-button w3-bar-item w3-hover-light-blue">
+                        <i style="font-size:350%" class=" w3-margin-bottom w3-margin-top    fa fa-sign-out" tabindex="1"></i>
+                        <span class="tooltiptext">Log out</span>
+                    </button>
+                </div>
+            </div>
+            <!--END OF >>>> BAR-BLOCK columns-->
+        </div>
+        <!--    SIDE BAR MENU - ONLY IN MOBILE VIEW-->
+        <div class="w3-sidebar w3-bar-block w3-white w3-animate-right" style="display:none;z-index:4;right:0" id="mySidebar">
+            <button class="w3-bar-item w3-white" onclick="w3_close('mySidebar')"><span class="w3-red w3-xlarge w3-right w3-padding">&times;</span></button>
+            <a href="#" class="w3-bar-item w3-button"><i class="fa fa-file-text-o" style="font-size:100%"></i>   My Surveys</a>
+            <a href="#" class="w3-bar-item w3-button"><i class="fa fa-pencil-square-o" style="font-size:100%"></i>   Reviews</a>
+            <a href="#" class="w3-bar-item w3-button"><i class="fa fa-calendar" style="font-size:100%"></i>   Calender</a>
+            <a href="#" class="w3-bar-item w3-button"><i class="fa fa-sign-out" style="font-size:100%"></i>   Log out</a>
+        </div>
+        <!--MAIN CONTENT column-->
+        <div class="w3-col w3-container w3-mobile" style="width:93%">
+            <!--HEADER  +  BUTTON  +  FA-BARS ☰  +  SPACE-->
+            <div class="w3-row w3-white" style="width:100%">
+                <div class="w3-col w3-border-bottom w3-border-grey" style="width:100%">
+                    <!--new row for "Create New" button and screen title-->
+                    <div class="w3-row w3-white" style="width:100%">
+                        <div class="w3-col" style="width:50%">
+                            <p class="w3-xxlarge w3-margin-left">Reviews</p>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="w3-col" style="width:50%">
+                            <!--HAMBURGER MENU - ONLY IN TABLET AND MOBILE VIEW-->
+                            <i class="fa fa-bars w3-text-orange w3-right w3-xxlarge w3-hide-large" tabindex="1" onclick="w3_open('mySidebar')"></i>
+                            <!--END OF >>>> HAMBURGER MENU-->
+                        </div>
+                        <!--END OF >>>>> new row creating survey-->
+                    </div>
+                </div>
+                <!--END OF >>>> HEADER  +  BUTTON  +  FA-BARS ☰  +  SPACE-->
+            </div>
+            <!--EVALUATION TABS-->
+            <div class="w3-bar w3-black w3-margin-top" style="width:100%">
+                <a class="w3-bar-item w3-button" onclick="openReviewTab(event, 'tab1');">Reviews from peers</a>
+                <a class="w3-bar-item w3-button" onclick="openReviewTab(event, 'tab2');">Write reviews</a>
+                <a class="w3-bar-item w3-button" onclick="openReviewTab(event, 'tab3');">Oversee All reviews</a>
+            </div>
+            <!--END OF >>>> EVALUATION TABS-->
+            <!--CONTAINER FOR ALL SIDEBARS  +  SURVEY DATA  +  TONE ANAYZER DATA-->
+            <div class="w3-row">
+                <!--CONTENT FOR tab1 TAB-->
+                <div id="tab1" class="city">
+                    <!--SIDEBAR CONTAINER-->
+                    <div class="w3-col" style="width:15%">
+                        <!--START OF SIDEBAR-->
+                        <div class="w3-bar-block w3-light-grey">
+                            <!--ACCORDION SURVEY 1-->
+                            <button onclick="openAccordions('Survey1')" class="w3-bar-item w3-button">SURVEY #1<i style="font-size:100%" class="w3-text-black fa fa-sort-down"></i></button>
+                            <!--END OF >>>>> ACCORDION SURVEY 1-->
+                            <!--CONTENT OF ACCORDION SURVEY 1-->
+                            <div id="Survey1" style="display:none">
+                                <button onclick="openSurveyItems(event, 'item1')" class="w3-bar-item w3-button w3-border-bottom">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item 1</button>
+                                <button onclick="openSurveyItems(event, 'item2')" class="w3-bar-item w3-button w3-border-bottom">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item 2</button>
+                            </div>
+                            <!--END OF >>>>> CONTENT OF ACCORDION SURVEY 1-->
+                        </div>
+                        <!--END OF >>>> SIDEBAR-->
+                    </div>
+                    <!--END OF >>>> SIDEBAR CONTAINER-->
+                    <!--SURVEY DATA  +   TONE ANALYSIS-->
+                    <div class="w3-col w3-row w3-panel" style="width:85%">
+                        <!--CONTENT FOR ITEM 1-->
+                        <div id="item1" class="w3-margin surveyItems" style="display:none">
+                            <div class="w3-col" style="width:70%">
+                                <!--SURVEY ITEMS IN A LIST  -->
+                                <ul class="w3-ul">
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">1.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">2.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">3.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                </ul>
+                                <!--END OF >>>>> SURVEY ITEMS IN A LIST -->
+                            </div>
+                            <!--TONE ANALYSIS FOR ITEM 1-->
+                            <div class="w3-padding w3-col" style="width:30%">
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                            </div>
+                            <!--END OF >>>>> TONE ANALYSIS FOR ITEM 1-->
+                        </div>
+                        <!--END OF >>>> CONTENT FOR ITEM 1-->
+                        <!--CONTENT FOR ITEM 2-->
+                        <div id="item2" class=" w3-panel surveyItems" style="display:none">
+                            <div class="w3-col" style="width:70%">
+                                <!--SURVEY ITEMS IN A LIST  -->
+                                <ul class="w3-ul">
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">1.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">2.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">3.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                </ul>
+                                <!--END OF >>>>> SURVEY ITEMS IN A LIST -->
+                            </div>
+                            <!--TONE ANALYSIS FOR ITEM 2-->
+                            <div class=" w3-col w3-padding" style="width:30%">
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                            </div>
+                            <!--END OF >>>>> TONE ANALYSIS FOR ITEM 2-->
+                        </div>
+                        <!--END OF >>>> CONTENT FOR ITEM 2-->
+                    </div>
+                    <!--END OF >>>>> SURVEY DATA  +   TONE ANALYSIS-->
+                </div>
+                <!--END OF >>>> CONTENT FOR tab1 TAB-->
+                <!--CONTENT FOR tab2 TAB-->
+                <div id="tab2" class="city" style="display:none">
+                    <!--SIDEBAR CONTAINER-->
+                    <div class="w3-col" style="width:15%">
+                        <!--START OF SIDEBAR-->
+                        <div class="w3-bar-block w3-light-grey">
+                            <!--ACCORDION SURVEY 1-->
+                            <button onclick="openAccordions('Survey1')" class="w3-bar-item w3-button">SURVEY #1<i style="font-size:100%" class="w3-text-black fa fa-sort-down"></i></button>
+                            <!--END OF >>>>> ACCORDION SURVEY 1-->
+                            <!--CONTENT OF ACCORDION SURVEY 1-->
+                            <div id="Survey1" style="display:none">
+                                <button onclick="openSurveyItems(event, 'item1')" class="w3-bar-item w3-button w3-border-bottom">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Person 1</button>
+                                <button onclick="openSurveyItems(event, 'item2')" class="w3-bar-item w3-button w3-border-bottom">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Person 2</button>
+                            </div>
+                            <!--END OF >>>>> CONTENT OF ACCORDION SURVEY 1-->
+                        </div>
+                        <!--END OF >>>> SIDEBAR-->
+                    </div>
+                    <!--END OF >>>> SIDEBAR CONTAINER-->
+                    <!--SURVEY DATA  +   TONE ANALYSIS-->
+                    <div class="w3-col w3-row w3-panel" style="width:85%">
+                        <!--CONTENT FOR ITEM 1-->
+                        <div id="item1" class="w3-margin surveyItems" style="display:none">
+                            <div class="w3-col" style="width:70%">
+                                <!--SURVEY ITEMS IN A LIST  -->
+                                <ul class="w3-ul">
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">1.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">2.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">3.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                </ul>
+                                <!--END OF >>>>> SURVEY ITEMS IN A LIST -->
+                            </div>
+                            <!--TONE ANALYSIS FOR ITEM 1-->
+                            <div class="w3-padding w3-col" style="width:30%">
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                            </div>
+                            <!--END OF >>>>> TONE ANALYSIS FOR ITEM 1-->
+                        </div>
+                        <!--END OF >>>> CONTENT FOR ITEM 1-->
+                        <!--CONTENT FOR ITEM 2-->
+                        <div id="item2" class=" w3-panel surveyItems" style="display:none">
+                            <div class="w3-col" style="width:70%">
+                                <!--SURVEY ITEMS IN A LIST  -->
+                                <ul class="w3-ul">
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">1.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">2.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <li class="w3-margin-bottom">
+                                        <select class="w3-xlarge" name="state" id="state">
+                                            <option value="A" selected="selected">A</option>
+                                            <option value="B">B</option>
+                                            <option value="C">C</option>
+                                            <option value="D">D</option>
+                                        </select>
+                                        <span class="w3-xlarge">3.) What grade would you give to your peer that helped you with homework?</span>
+                                        <input type="text" class="w3-margin-top w3-border w3-input">
+                                        <button class="w3-btn w3-light-blue w3-padding w3-large w3-right w3-margin-top">Tone Analysis</button>
+                                        <br>
+                                    </li>
+                                    <br>
+                                    <button class="w3-btn w3-green w3-padding w3-large w3-right w3-margin-top">Send</button>
+                                </ul>
+                                <!--END OF >>>>> SURVEY ITEMS IN A LIST -->
+                            </div>
+                            <!--TONE ANALYSIS FOR ITEM 2-->
+                            <div class=" w3-col w3-padding" style="width:30%">
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                                <ul class="w3-ul">
+                                    <li>Angry 5%</li>
+                                    <li>Happy 5%</li>
+                                    <li>Funny 15%</li>
+                                    <li>Sad 25%</li>
+                                    <li>Bored 45%</li>
+                                </ul>
+                                <br>
+                            </div>
+                            <!--END OF >>>>> TONE ANALYSIS FOR ITEM 2-->
+                        </div>
+                        <!--END OF >>>> CONTENT FOR ITEM 2-->
+                    </div>
+                    <!--END OF >>>>> SURVEY DATA  +   TONE ANALYSIS-->
+                </div>
+                <!--END OF >>>> CONTENT FOR tab2 TAB-->
+                <!--CONTENT FOR tab3 TAB-->
+                <div id="tab3" class="city" style="display:none">
+                    <!--SIDEBAR CONTAINER 15%-->
+                    <div class="w3-col" style="width:15%">
+                        <!--START OF SIDEBAR-->
+                        <div class="w3-sidebar w3-green">
+                            <a class="w3-bar-item w3-button w3-border-bottom">Link 3</a>
+                            <a class="w3-bar-item w3-button w3-border-bottom">Link 3</a>
+                            <a class="w3-bar-item w3-button w3-border-bottom">Link 3</a>
+                            <a class="w3-bar-item w3-button w3-border-bottom">Link 3</a>
+                            <a class="w3-bar-item w3-button w3-border-bottom">Link 3</a>
+                        </div>
+                        <!--END OF >>>> SIDEBAR-->
+                    </div>
+                    <!--END OF >>>> SIDEBAR CONTAINER 15%-->
+                </div>
+                <!--END OF >>>> CONTENT FOR tab3 TAB-->
+            </div>
+            <!--END OF  >>>>> CONTAINER FOR ALL SIDEBARS  +  SURVEY DATA  +  TONE ANAYZER DATA-->
+            <!--END OF >>>> MAIN CONTENT column-->
+        </div>
+        <!--END OF >>>> CONTAINER OF ALL-->
     </div>
     <!--END Register screen-->
     <script src="script/util.js"></script>
