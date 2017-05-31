@@ -4,7 +4,14 @@
 .w3-torquise {
     color: #61C79F !important;
 }
-
+.w3-topbar-lightblue{
+	border-top:4px solid #87CEEB;
+}
+button:focus{
+	background-color:white;
+	box-shadow:0 8px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.2);
+	color:rgb(0, 0, 0);
+}
 .hero-image {
     background-image: url('http://static-api.visually.netdna-cdn.com/media/images/v3/index/images/hero-background.jpg');
     width: 100%;
