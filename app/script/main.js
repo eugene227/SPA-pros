@@ -68,6 +68,15 @@ CLICK("#registration .X_register", function(json, status) {
 //  REVIEW
 //=================================================================
 PAGE["reviews"] = "#reviews";
+CLICK("#reviews .X_mySurveys", function(json, status) { // CHECK
+    hashUpdate("mySurveys");
+});
+CLICK("#reviews .X_reviews", function(json, status) {
+    hashUpdate("reviews");
+});    
+CLICK("#reviews .X_logout", function(json, status) {
+    hashUpdate("landing");
+});
 CLICK("#reviews .X_____", function(json, status) {
     // pout("#registration .X_register");
     switch (status) {
@@ -98,6 +107,9 @@ CLICK("#reviews .X_____", function(json, status) {
 PAGE["mySurveys"] = "#mySurveys";
 CLICK("#mySurveys .X_mySurveys", function(json, status) { // CHECK
     hashUpdate("mySurveys");
+});
+CLICK("#mySurveys .X_proposals", function(json, status) { // CHECK
+    hashUpdate("proposals");
 });
 CLICK("#mySurveys .X_reviews", function(json, status) {
     hashUpdate("reviews");
@@ -249,7 +261,22 @@ CLICK("#edit-survey .X_save-changes", function(json, status) {
             break;
     }
 });
-
+//=================================================================
+//  propose survey
+//=================================================================
+PAGE["proposals"] = "#proposals";
+CLICK("#proposals .X_mySurveys", function(json, status) { // CHECK
+    hashUpdate("mySurveys");
+});
+CLICK("#proposals .X_reviews", function(json, status) {
+    hashUpdate("reviews");
+});    
+CLICK("#proposals .X_logout", function(json, status) {
+    hashUpdate("landing");
+});
+CLICK("#proposals .X_cancle", function(json, status) {
+    hashUpdate("mySurveys");
+})
 //=================================================================
 // test buttons
 //=================================================================
